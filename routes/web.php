@@ -22,3 +22,7 @@ Route::middleware(['auth', AuthAdmin::class])->group(function () {
     Route::put('admin/brand/update/{id}', [AdminController::class, 'brand_update'])->name('admin.brand.update');
     Route::delete('admin/brand/delete/{id}', [AdminController::class, 'brand_delete'])->name('admin.brand.delete');
 });
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

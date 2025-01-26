@@ -24,9 +24,6 @@
     <link rel="stylesheet" type="text/css" href="{{asset('css/sweetalert.min.css')}}">
     <link rel="stylesheet" type="text/css" href="{{asset('css/custom.css')}}">
 
-    <!-- Scripts -->
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
-    @stack('style')
 </head>
 <body class="body">
     <div id="wrapper">
