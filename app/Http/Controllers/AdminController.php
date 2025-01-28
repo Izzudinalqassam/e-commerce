@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Brands;
+use App\Models\Category;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -101,4 +102,44 @@ class AdminController extends Controller
             $constraint->aspectRatio();
         })->save($destinationPath . '/' . $imageName);
     }
+
+    public function categories()
+    {
+        $categories = Category::orderBy('id', 'desc')->paginate(10);
+        return view('admin.categories', compact('categories'));
+    }
+
+    public function categories_add()
+    {
+        return view('admin.category-add');
+    }
+
+    public function categories_store(Request $request){
+        $request->validate([
+            'name' => 'required',
+            'slug' => 'required|unique:categories,slug',
+            'image' => 'mimes:jpg,jpeg,png | max:2048',
+        ]);
+        $category = new Category();
+        $category->name = $request->name;
+        $category->slug = Str::slug($request->name);
+        $image = $request->file('image');
+        $file_extension = $request->file('image')->extension();
+        $file_name = Carbon::now()->timestamp . '.' . $file_extension;
+        $this->GenerateCategoryThumbnailIsImage($image, $file_name);
+        $category->image = $file_name;
+        $category->save();
+        return redirect()->route('admin.categories')->with('status', 'Category Added Successfully');
+
+    }
+    public function GenerateCategoryThumbnailIsImage($image, $imageName)
+    {
+        $destinationPath = public_path('/uploads/categories');  // upload path
+        $img = Image::read($image->path());
+        $img->cover(124, 124, "top");
+        $img->resize(124, 124, function ($constraint) {
+            $constraint->aspectRatio();
+        })->save($destinationPath . '/' . $imageName);
+    }
+
 }
