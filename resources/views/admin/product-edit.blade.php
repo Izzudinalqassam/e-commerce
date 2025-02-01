@@ -31,7 +31,7 @@
             </div>
             <!-- form-add-product -->
             <form class="tf-section-2 form-add-product" method="POST" enctype="multipart/form-data"
-                action="{{ route('admin.product.update') }}">
+                action="{{ route('admin.product.update', $product->id) }}">
                 <input type="hidden" name="id" value="{{ $product->id }}" />
                 @csrf
                 @method('PUT')
@@ -99,7 +99,7 @@
                         <div class="upload-image flex-grow">
                             @if ($product->image)
                                 <div class="item" id="imgpreview">
-                                    <img src="{{ asset('uploads/products') }}/{{ $product->image }}" class="effect8"
+                                    <img src="{{ asset('storage/uploads/' . $product->image) }}" class="effect8"
                                         alt="">
                                 </div>
                             @endif
@@ -120,9 +120,9 @@
                         <div class="body-title mb-10">Upload Gallery Images</div>
                         <div class="upload-image mb-16">
                             @if ($product->images)
-                                @foreach (explode(',', $product->images) as $img)
+                                @foreach (explode( ',', $product->images) as $img)
                                     <div class="item gitems">
-                                        <img src="{{ asset('uploads/products') }}/{{ trim($img) }}" class="effect8"
+                                        <img src="{{ asset('storage/uploads/' . trim($img)) }}" class="effect8"
                                             alt="">
                                     </div>
                                 @endforeach
@@ -209,7 +209,7 @@
                 const photoInp = $("#myFile");
                 const [file] = this.files;
                 if (file) {
-                    $("#imgpreview img").attr('src', URL.createObjectURL(file));
+                    $("#imgpreview img").attr('src',URL.createObjectURL(file));
                     $("#imgpreview").show();
                 }
             });
@@ -217,7 +217,7 @@
 
             $("#gFile").on("change", function(e) {
                 $(".gitems").remove();
-                const gFile = $("gFile");
+                const gFile = $("#gFile");
                 const gphotos = this.files;
                 $.each(gphotos, function(key, val) {
                     $("#galUpload").prepend(
