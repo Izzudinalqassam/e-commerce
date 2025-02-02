@@ -120,19 +120,29 @@ class AdminController extends Controller
         $request->validate([
             'name' => 'required',
             'slug' => 'required|unique:categories,slug',
-            'image' => 'mimes:jpg,jpeg,png | max:2048',
+            'image' => 'required|mimes:jpg,jpeg,png|max:2048', // Pastikan required
         ]);
+
+        if (!$request->hasFile('image') || !$request->file('image')->isValid()) {
+            return back()->withErrors(['image' => 'Invalid or no image uploaded.']);
+        }
+
         $category = new Category();
         $category->name = $request->name;
         $category->slug = Str::slug($request->name);
+
         $image = $request->file('image');
-        $file_extension = $request->file('image')->extension();
+        $file_extension = $image->extension();
         $file_name = Carbon::now()->timestamp . '.' . $file_extension;
+
         $this->GenerateCategoryThumbnailIsImage($image, $file_name);
+
         $category->image = $file_name;
         $category->save();
+
         return redirect()->route('admin.categories')->with('status', 'Category Added Successfully');
     }
+
     public function GenerateCategoryThumbnailIsImage($image, $imageName)
     {
         $destinationPath = public_path('/uploads/categories');  // upload path
@@ -164,8 +174,8 @@ class AdminController extends Controller
         $category = Category::find($id);
         $request->validate([
             'name' => 'required',
-            'slug' => 'required|unique:categories,slug,' . $category->id,
-            'image' => 'mimes:jpg,jpeg,png|max:2048',
+            'slug' => 'required|unique:categories,slug',
+            'image' => 'required|mimes:jpg,jpeg,png|max:2048', // Pastikan required
         ]);
 
         $category = Category::find($request->id);

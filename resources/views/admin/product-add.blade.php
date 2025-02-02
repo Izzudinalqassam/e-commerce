@@ -186,7 +186,7 @@
     </div>
     <!-- /main-content-wrap -->
 @endsection
-@push("script")
+@push('script')
     <script>
             $(function(){
                 $("#myFile").on("change",function(e){
