@@ -164,13 +164,7 @@
                                 aria-labelledby="accordion-heading-brand" data-bs-parent="#brand-filters">
                                 <div class="search-field multi-select accordion-body px-0 pb-0">
                                     <select class="d-none" multiple name="total-numbers-list">
-                                        <option value="1">Adidas</option>
-                                        <option value="2">Balmain</option>
-                                        <option value="3">Balenciaga</option>
-                                        <option value="4">Burberry</option>
-                                        <option value="5">Kenzo</option>
-                                        <option value="5">Givenchy</option>
-                                        <option value="5">Zara</option>
+                                        
                                     </select>
                                     <div class="search-field__input-wrapper mb-3">
                                         <input type="text" name="search_text"
@@ -357,7 +351,8 @@
 
                     <div class="d-flex justify-content-between mb-4 pb-md-2">
                         <div class="breadcrumb mb-0 d-none d-md-block flex-grow-1">
-                            <a href="{{ route('home.index') }}" class="menu-link menu-link_us-s text-uppercase fw-medium">Home</a>
+                            <a href="{{ route('home.index') }}"
+                                class="menu-link menu-link_us-s text-uppercase fw-medium">Home</a>
                             <span class="breadcrumb-separator menu-link fw-medium ps-1 pe-1">/</span>
                             <a href="#" class="menu-link menu-link_us-s text-uppercase fw-medium">The Shop</a>
                         </div>
@@ -411,14 +406,18 @@
                                             data-settings='{"resizeObserver": true}'>
                                             <div class="swiper-wrapper">
                                                 <div class="swiper-slide">
-                                                    <a href="{{route('shop.product.details',["product_slug"=>$product->slug])}}"><img loading="lazy"
+                                                    <a
+                                                        href="{{ route('shop.product.details', ['product_slug' => $product->slug]) }}"><img
+                                                            loading="lazy"
                                                             src="{{ asset('storage/uploads/' . $product->image) }}"
                                                             width="330" height="400" alt="{{ $product->name }}"
                                                             class="pc__img"></a>
                                                 </div>
                                                 <div class="swiper-slide">
                                                     @foreach (explode(',', $product->images) as $gimg)
-                                                        <a href="{{route('shop.product.details',["product_slug"=>$product->slug])}}"><img loading="lazy"
+                                                        <a
+                                                            href="{{ route('shop.product.details', ['product_slug' => $product->slug]) }}"><img
+                                                                loading="lazy"
                                                                 src="{{ asset('storage/uploads/' . trim($gimg)) }}"
                                                                 width="330" height="400" alt="{{ $product->name }}"
                                                                 class="pc__img"></a>
@@ -434,14 +433,29 @@
                                                     <use href="#icon_next_sm" />
                                                 </svg></span>
                                         </div>
-                                        <button
-                                            class="pc__atc btn anim_appear-bottom btn position-absolute border-0 text-uppercase fw-medium js-add-cart js-open-aside"
-                                            data-aside="cartDrawer" title="Add To Cart">Add To Cart</button>
+                                        @if (Cart::instance('cart')->content()->where('id', $product->id)->count() > 0)
+                                            <a href="{{ route('cart.index') }}" class="pc__atc btn anim_appear-bottom btn position-absolute border-0 text-uppercase fw-medium btn-warning mb-3">
+                                                go to cart
+                                            </a>
+                                        @else
+                                        <form name="addtocart-form" method="post" action="{{ route('cart.add') }}">
+                                            @csrf
+                                            <input type="hidden" name="id" value="{{ $product->id }}" />
+                                            <input type="hidden" name="quantity"  value="1" />
+                                            <input type="hidden" name="name" value="{{ $product->name }}" />
+                                            <input type="hidden" name="price" value="{{ $product->sale_price == null ? $product->regular_price : $product->sale_price }}" />
+                                            <button type="submit"
+                                                class="pc__atc btn anim_appear-bottom btn position-absolute border-0 text-uppercase fw-medium "
+                                                data-aside="cartDrawer" title="Add To Cart">Add To Cart</button>
+                                        </form>
+                                        @endif
                                     </div>
 
                                     <div class="pc__info position-relative">
                                         <p class="pc__category">{{ $product->category->name }}</p>
-                                        <h6 class="pc__title"><a href="{{route('shop.product.details',["product_slug"=>$product->slug])}}">{{ $product->name }}</a></h6>
+                                        <h6 class="pc__title"><a
+                                                href="{{ route('shop.product.details', ['product_slug' => $product->slug]) }}">{{ $product->name }}</a>
+                                        </h6>
                                         <div class="product-card__price d-flex">
                                             <span class="money price">
                                                 @if ($product->sale_price)
@@ -502,4 +516,3 @@
             </section>
         </main>
     @endsection
-

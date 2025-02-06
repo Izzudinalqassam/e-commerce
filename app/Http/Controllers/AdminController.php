@@ -402,4 +402,6 @@ class AdminController extends Controller
 
         return redirect()->route('admin.products')->with('status', 'Product has been deleted successfully!');
     }
+
+    
 }
