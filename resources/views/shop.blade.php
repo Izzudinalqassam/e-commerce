@@ -164,7 +164,13 @@
                                 aria-labelledby="accordion-heading-brand" data-bs-parent="#brand-filters">
                                 <div class="search-field multi-select accordion-body px-0 pb-0">
                                     <select class="d-none" multiple name="total-numbers-list">
-                                        
+                                        <option value="1">Adidas</option>
+                                        <option value="2">Balmain</option>
+                                        <option value="3">Balenciaga</option>
+                                        <option value="4">Burberry</option>
+                                        <option value="5">Kenzo</option>
+                                        <option value="5">Givenchy</option>
+                                        <option value="5">Zara</option>
                                     </select>
                                     <div class="search-field__input-wrapper mb-3">
                                         <input type="text" name="search_text"
