@@ -28,119 +28,142 @@
                 </a>
             </div>
             <div class="shopping-cart">
-                @if($items->count() > 0)
-                <div class="cart-table__wrapper">
-                    <table class="cart-table">
-                        <thead>
-                            <tr>
-                                <th>Product</th>
-                                <th></th>
-                                <th>Price</th>
-                                <th>Quantity</th>
-                                <th>Subtotal</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($items as $item)
-                            <tr>
-                                <td>
-                                    <div class="shopping-cart__product-item">
-                                        <img loading="lazy" src="{{ asset('storage/uploads/'.$item->model->image)}}" width="120"
-                                            height="120" alt="{{ $item->name}}" />
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="shopping-cart__product-item__detail">
-                                        <h4>{{ $item->name }}</h4>
-                                        <ul class="shopping-cart__product-item__options">
-                                            <li>Color: Yellow</li>
-                                            <li>Size: L</li>
-                                        </ul>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="shopping-cart__product-price">${{ $item->price }}</span>
-                                </td>
-                                <td>
-                                    <div class="qty-control position-relative">
-                                        <input type="number" name="quantity" value="{{ $item->qty}}" min="1"
-                                            class="qty-control__number text-center">
-                                        <div class="qty-control__reduce">-</div>
-                                        <div class="qty-control__increase">+</div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="shopping-cart__subtotal">${{$item->subtotal()}}</span>
-                                </td>
-                                <td>
-                                    <a href="#" class="remove-cart">
-                                        <svg width="10" height="10" viewBox="0 0 10 10" fill="#767676"
-                                            xmlns="http://www.w3.org/2000/svg">
-                                            <path
-                                                d="M0.259435 8.85506L9.11449 0L10 0.885506L1.14494 9.74056L0.259435 8.85506Z" />
-                                            <path
-                                                d="M0.885506 0.0889838L9.74057 8.94404L8.85506 9.82955L0 0.97449L0.885506 0.0889838Z" />
-                                        </svg>
-                                    </a>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                    <div class="cart-table-footer">
-                        <form action="#" class="position-relative bg-body">
-                            <input class="form-control" type="text" name="coupon_code" placeholder="Coupon Code">
-                            <input class="btn-link fw-medium position-absolute top-0 end-0 h-100 px-4" type="submit"
-                                value="APPLY COUPON">
-                        </form>
-                        <button class="btn btn-light">UPDATE CART</button>
-                    </div>
-                </div>
-
-                <div class="shopping-cart__totals-wrapper">
-                    <div class="sticky-content">
-                        <div class="shopping-cart__totals">
-                            <h3>Cart Totals</h3>
-                            <table class="cart-totals">
-
-                                <tbody>
-
-
+                @if ($items->count() > 0)
+                    <div class="cart-table__wrapper">
+                        <table class="cart-table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th></th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Subtotal</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($items as $item)
                                     <tr>
-                                        <th>Subtotal</th>
-                                        <td>${{ Cart::instance('cart')->subtotal() }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Shipping</th>
                                         <td>
-                                            free
+                                            <div class="shopping-cart__product-item">
+                                                <img loading="lazy"
+                                                    src="{{ asset('storage/uploads/' . $item->model->image) }}"
+                                                    width="120" height="120" alt="{{ $item->name }}" />
+                                            </div>
                                         </td>
-                                    </tr>
-                                    <tr>
-                                        <th>VAT</th>
-                                        <td>${{Cart::instance('cart')->tax()}}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Total</th>
-                                        <td>${{Cart::instance('cart')->total()}}</td>
-                                    </tr>
-                                </tbody>
+                                        <td>
+                                            <div class="shopping-cart__product-item__detail">
+                                                <h4>{{ $item->name }}</h4>
+                                                <ul class="shopping-cart__product-item__options">
+                                                    <li>Color: Yellow</li>
+                                                    <li>Size: L</li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="shopping-cart__product-price">${{ $item->price }}</span>
+                                        </td>
+                                        <td>
+                                            <div class="qty-control position-relative">
+                                                {{-- update quantity --}}
+                                                <form action="{{ route('cart.update', ['rowId' => $item->rowId]) }}" method="POST" style="display: inline;">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <input type="number" name="quantity" value="{{ $item->qty }}" min="1"
+                                                           style="width: 50px; text-align: center;"
+                                                           onkeydown="if(event.key === 'Enter') { this.form.submit(); }">
+                                                </form>
+                                                {{-- decrease --}}
+                                                <form action="{{ route('cart.decrease', ['rowId' => $item->rowId]) }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <div class="qty-control__reduce">-</div>
+                                                </form>
+                                                {{-- increase --}}
+                                                <form action="{{ route('cart.increase', ['rowId' => $item->rowId]) }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <div class="qty-control__increase">+</div>
+                                                </form>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="shopping-cart__subtotal">${{ $item->subtotal() }}</span>
+                                        </td>
+                                        <td>
+                                            <form action="{{ route('cart.remove', ['rowId' => $item->rowId]) }}"
+                                                method="POST" style="display: inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="remove-cart"
+                                                    style="background: none; border: none; cursor: pointer;">
+                                                    <svg width="10" height="10" viewBox="0 0 10 10" fill="#767676"
+                                                        xmlns="http://www.w3.org/2000/svg">
+                                                        <path
+                                                            d="M0.259435 8.85506L9.11449 0L10 0.885506L1.14494 9.74056L0.259435 8.85506Z" />
+                                                        <path
+                                                            d="M0.885506 0.0889838L9.74057 8.94404L8.85506 9.82955L0 0.97449L0.885506 0.0889838Z" />
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                        </td>
 
-                            </table>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                        <div class="cart-table-footer">
+                            <form action="#" class="position-relative bg-body">
+                                <input class="form-control" type="text" name="coupon_code" placeholder="Coupon Code">
+                                <input class="btn-link fw-medium position-absolute top-0 end-0 h-100 px-4" type="submit"
+                                    value="APPLY COUPON">
+                            </form>
+                            <button class="btn btn-light">UPDATE CART</button>
                         </div>
-                        <div class="mobile_fixed-btn_wrapper">
-                            <div class="button-wrapper container">
-                                <a href="checkout.html" class="btn btn-primary btn-checkout">PROCEED TO CHECKOUT</a>
+                    </div>
+
+                    <div class="shopping-cart__totals-wrapper">
+                        <div class="sticky-content">
+                            <div class="shopping-cart__totals">
+                                <h3>Cart Totals</h3>
+                                <table class="cart-totals">
+
+                                    <tbody>
+                                        <tr>
+                                            <th>Subtotal</th>
+                                            <td>${{ Cart::instance('cart')->subtotal() }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Shipping</th>
+                                            <td>
+                                                free
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>VAT</th>
+                                            <td>${{ Cart::instance('cart')->tax() }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Total</th>
+                                            <td>${{ Cart::instance('cart')->total() }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="mobile_fixed-btn_wrapper">
+                                <div class="button-wrapper container">
+                                    <a href="checkout.html" class="btn btn-primary btn-checkout">PROCEED TO CHECKOUT</a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
                 @else
                     <div class="row">
                         <div class="col-md-12 text-center pt-5 bp-5">
                             <p>No Item in Cart</p>
-                            <a href="{{route('shop.index')}}" class="btn btn-info">Shop Now</a>
+                            <a href="{{ route('shop.index') }}" class="btn btn-info">Shop Now</a>
                         </div>
                     </div>
                 @endif
@@ -148,3 +171,23 @@
         </section>
     </main>
 @endsection
+
+@push('script')
+    <script>
+        $(function() {
+            // Submit form saat klik tombol + atau -
+            $(".qty-control__increase, .qty-control__reduce").on("click", function() {
+                $(this).closest("form").submit();
+            });
+
+            // Submit form saat tekan Enter pada input quantity
+            $(".qty-control__number").on("keydown", function(e) {
+                if (e.key === "Enter") {
+                    e.preventDefault(); // Cegah reload halaman
+                    $(this).closest("form").find(".qty-control__increase, .qty-control__reduce").first()
+                        .click();
+                }
+            });
+        });
+    </script>
+@endpush
